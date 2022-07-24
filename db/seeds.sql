@@ -4,13 +4,13 @@ VALUES
     ('Strategy'),
     ('Sales');
 
-INSERT INTO role (title, salary, department_id)
+INSERT INTO roles (title, salary, department_id)
 VALUES
     ('Manager', 80000, 1),
     ('Sr. Manager', 100000, 2),
     ('Head', 150000, 3);
 
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
+INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES
     ('Jane', 'Smith', 1, 1),
     ('Ali', 'Chan', 2, 1),

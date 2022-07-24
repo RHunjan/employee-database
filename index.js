@@ -39,13 +39,19 @@ const allDepartments = function(){
 };
 
 const allRoles = function(){
-  db.query(`SELECT * FROM role`, (err, rows) => {
+  db.query(`SELECT * FROM roles`, (err, rows) => {
     console.table(rows);
   });
 }
 
-
+const viewEmployees = function(){
+  db.query(`SELECT * FROM employees 
+    LEFT JOIN roles ON employees.role_id`, (err, rows) =>{
+      console.table(rows);
+    });
+};
  
 allDepartments();
 allRoles();
+viewEmployees();
  
