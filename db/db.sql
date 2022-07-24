@@ -1,0 +1,4 @@
+DROP DATABASE IF EXISTS firm;
+
+CREATE DATABASE firm;
+USE firm;
