@@ -3,17 +3,6 @@ const cTable = require('console.table');
 
 const db = require('./db/connection');
 
-// console.table([
-//   {
-//     name: 'foo',
-//     age: 10
-//   }, {
-//     name: 'bar',
-//     age: 20
-//   }
-// ]);
-
-
 //view all departments
 const allDepartments = function(){
   db.query(`SELECT * FROM departments`, (err, rows) => {
@@ -66,13 +55,45 @@ const addDepartment = function(name){
   const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
   VALUES (?,?,?,?)`;
   const params = [first,last,role,manager];
-
   db.query(sql, params, (err, result) => { 
     if (err) throw err;
     return;
-  
-  });
+    });
  };
+
+ 
+ //updates an employee role - select an employee and update their role and update the db
+ const updateEmployee = function(){
+
+  db.query(`SELECT employees.first_name, employees.last_name, employees.id FROM employees`, (err, response) =>{
+  if (err) throw err;
+
+  const empArray = response.map(({first_name, last_name, id}) => (
+    { name: `${first_name} ${last_name} ID: ${id}` }));
+
+    console.log(empArray);
+
+     inquirer.prompt([
+    {
+      type: 'list',
+      name: 'employees',
+      message: 'choose employee to update',
+      choices: empArray
+    }
+  ]);
+  
+  });   
+    
+
+
+   
+
+   
+
+ };
+
+updateEmployee(); 
+
 
  //prompt for new department
  const newDepartment = () => {
@@ -82,7 +103,6 @@ const addDepartment = function(name){
       name: 'department',
       message: 'Enter new department'
     }
-
   ]);
  };
 
@@ -109,7 +129,6 @@ const addDepartment = function(name){
       name: 'manager',
       message: 'Enter manager id'
     }
-
   ]);
  };
 
@@ -135,7 +154,7 @@ const addDepartment = function(name){
   ]);
  };
 
-
+//initial prompt
  const initialPrompt = ()=> {
     return inquirer.prompt ([
         {
@@ -154,62 +173,50 @@ const addDepartment = function(name){
     ]);
 };
 
-initialPrompt()
-.then(answer => {
-  if (answer.choice === 'View all departments'){
-      allDepartments();
-  } 
+// //initialPrompt()
+// .then(answer => {
+//   if (answer.choice === 'View all departments'){
+//       allDepartments();
+//   } 
   
-  if (answer.choice === 'View all roles'){
-    allRoles();
-  }
+//   if (answer.choice === 'View all roles'){
+//     allRoles();
+//   }
 
-  if (answer.choice === 'View all employees'){
-    viewEmployees();
-  }
+//   if (answer.choice === 'View all employees'){
+//     viewEmployees();
+//   }
 
-  if (answer.choice === 'Add a department'){
-    newDepartment()
-    .then(answer => {
-      addDepartment(answer.department);
-     });
-  }
+//   if (answer.choice === 'Add a department'){
+//     newDepartment()
+//     .then(answer => {
+//       addDepartment(answer.department);
+//      });
+//   }
 
-  if (answer.choice === 'Add a role'){
-    newRole()
-    .then(answers => {
-      var title = answers.title;
-      var salary = answers.salary;
-      var department = answers.department;
+//   if (answer.choice === 'Add a role'){
+//     newRole()
+//     .then(answers => {
+//       var title = answers.title;
+//       var salary = answers.salary;
+//       var department = answers.department;
 
-      addRole(title,salary,department);
-    });
-  }
+//       addRole(title,salary,department);
+//     });
+//   }
 
-  if (answer.choice === 'Add an employee'){
-    newEmployee()
-    .then(answers => {
-      var first = answers.firstName;
-      var last = answers.lastName;
-      var role = answers.role;
-      var manager = answers.manager;
-
-      addEmployee(first, last, role, manager);
-
-      console.log(first, last, role, manager);
-    });
-  }
+//   if (answer.choice === 'Add an employee'){
+//     newEmployee()
+//     .then(answers => {
+//       var first = answers.firstName;
+//       var last = answers.lastName;
+//       var role = answers.role;
+//       var manager = answers.manager;
+//       addEmployee(first, last, role, manager);
+//     });
+//   }
   
  
-});
-
- //update employee role - takes in employee id and updates the role
+// });
 
 
-// addEmployee('Reena', 'Hunjan', 3, 2);
-// addRole('Something', 89098, 3);
-// allDepartments();
-// allRoles();
-// viewEmployees();
-// addDepartment('Marketing');
- 
