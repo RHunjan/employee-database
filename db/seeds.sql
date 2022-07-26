@@ -1,3 +1,4 @@
+
 INSERT INTO departments (name)
 VALUES
     ('Finance'),
@@ -15,5 +16,4 @@ VALUES
     ('Jane', 'Smith', 1, 1),
     ('Ali', 'Chan', 2, 1),
     ('Jagmeet', 'Patel', 3, 2);
-
 
