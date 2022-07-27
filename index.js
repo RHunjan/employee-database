@@ -51,22 +51,7 @@ const addDepartment = function(name){
  };
 //addDepartment('IT');
 
-//Get array of all departments
-
-
-
- //add a role - name of role, salary and department
- const addRole = function(title, salary, department) {
-  const sql = `INSERT INTO roles (title, salary, department_id)
-  VALUES (?,?,?)`;
-  const params = [title, salary, department];
-  db.query(sql, params, (err, result) => {
-    if (err) throw error;
-    return;
-  });
- };
- //addRole('CEO', 400000, 1);
-
+//---------------------------------------------------------------------------------------------------
 //add a role - name, salary, department
 
 const addNewRole = function(){
@@ -76,24 +61,45 @@ const addNewRole = function(){
 
     let deptArray = [];
     res.forEach((dept) => {
-      deptArray.push(`${dept.name}`);
+      deptArray.push(
+        {name: `${dept.name}`,
+        id: dept.id
+                })
     });
-
-    inquirer.prompt([
-      {type: 'list',
-        name: 'department',
-        message: 'please work',
-        choices: deptArray
-
-
+  
+    let questions = [
+      {type: 'input',
+       name: 'role',
+       message:'Please enter the name of the roll',
+    },
+    {type: 'input',
+     name: 'salary',
+     message:'Please enter the salary',
+    },
+    {type: 'list',
+     name: 'department',
+     message:'Pick the department for the roll',
+     choices: deptArray
     }
-    ]);
+    ];
 
-
-
-
-
-  });
+    inquirer.prompt(questions)
+    .then(answers =>{
+      let department_id;
+      deptArray.forEach(role => {
+        if (role.name === answers.department){
+            department_id = role.id;
+            }
+          });
+      const sql = `INSERT INTO roles (title, department_id, salary)
+      VALUES (?,?,?)`;
+      let params = [answers.role, department_id, answers.salary];
+       db.query(sql,params, (err, res) =>{
+        if (err) throw err;
+        console.log(res);
+       });
+       ;});
+     });
 };
 
-addNewRole();
+//addNewRole();
