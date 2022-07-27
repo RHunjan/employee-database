@@ -70,7 +70,7 @@ const addNewRole = function(){
     let questions = [
       {type: 'input',
        name: 'role',
-       message:'Please enter the name of the roll',
+       message:'Please enter the name of the role',
     },
     {type: 'input',
      name: 'salary',
@@ -78,7 +78,7 @@ const addNewRole = function(){
     },
     {type: 'list',
      name: 'department',
-     message:'Pick the department for the roll',
+     message:'Pick the department for the role',
      choices: deptArray
     }
     ];
@@ -102,4 +102,8 @@ const addNewRole = function(){
      });
 };
 
-//addNewRole();
+addNewRole();
+//------------------------------------------------------------------------------------------------------
+//add employee - first name, last name, role, manager
+
+const addNewEmployee = function(){};
