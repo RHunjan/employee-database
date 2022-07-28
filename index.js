@@ -47,10 +47,10 @@ const addDepartment = function(department){
   VALUES (?)`;
   const params = department;
   db.query(sql, params, (err, result) => {
-    if (err) {
-    console.log(err);
-    }
-    console.log(result);
+    if (err) throw err;
+       
+   // console.log(result);
+    initialPrompt();
 
   });
  };
@@ -186,16 +186,13 @@ const addNewEmployee = function(){
            if (manager.name === answer.manager){
            managerID = manager.id;
          }
-
-         //console.log(nextRes);
-        // console.log(managerID);
          let sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
                     VALUES (?,?,?,?)`;
          let params = [nextRes.firstName, nextRes.lastName, nextRes.role_id, managerID];
          db.query(sql, params, (err, result) => {
           if (err) throw err;
           //console.log(result);
-                initialPrompt();
+          initialPrompt();
         });
   
         
@@ -337,4 +334,4 @@ const initialPrompt = () => {
 
 };
 
-  initialPrompt();
+ // initialPrompt();
