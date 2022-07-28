@@ -2,7 +2,7 @@ const inquirer = require("inquirer");
 const cTable = require('console.table');
 
 const db = require('./db/connection');
-const { listenerCount } = require("./db/connection");
+
 
 
 //view all departments
@@ -11,17 +11,15 @@ const { listenerCount } = require("./db/connection");
     console.table(rows);
     initialPrompt();
   })
-
-  
 };
 //allDepartments();
 
  //view all roles
-const allRoles = function(){
-  db.query(`SELECT * FROM roles`, (err, rows) => {
-    console.table(rows);
- 
-  });
+  const allRoles = function(){
+  db.query(`SELECT * FROM roles`, (err, result) => {
+    console.table(result);
+    initialPrompt();
+   });
 }
 //allRoles();
 
@@ -151,7 +149,7 @@ const addNewEmployee = function(){
       roleArray.forEach((role) => {
           if (role.name === answers.role){
               roleID = role.id;
-              console.log(roleID);
+              //console.log(roleID);
       }
       })
       let empObj = {
@@ -197,7 +195,9 @@ const addNewEmployee = function(){
          db.query(sql, params, (err, result) => {
           if (err) throw err;
           //console.log(result);
+                initialPrompt();
         });
+  
         
         });
         //console.log(managerID);
@@ -293,31 +293,44 @@ const initialPrompt = () => {
       'View all Employees' ,  
       'Add a Department' , 
       'Add a Role',
+      "Add an Employee",
 
       'Quit \n \n'
     ]}
   ])
   .then((choice) =>{
-   
     if (choice.choices === 'View all Departments'){
       allDepartments();
     }
 
-    if (choice.choices === 'View all Roles '){
+    if (choice.choices === 'View all Roles'){
       allRoles();
     }
 
-    if (choice.choices ==='View all Employees'){
+    if (choice.choices === 'View all Employees'){
       viewEmployees();
     }
 
-    if (choice.choices === 'Add a department'){
-      console.log('choice.choices');
-    }
-
-    if (choice.choices === 'Add a Role'){
-      addNewRole();
-    }
+    if (choice.choices == 'Add a Department'){
+      console.log(choice.choices);
+      inquirer.prompt([
+        {type: 'input',
+        name: 'department',
+        message: 'Add department name'
+      }
+      ]).then(dept => {
+        addDepartment(dept.department);
+      });
+      }
+      
+      if (choice.choices == 'Add a Role'){
+       addNewRole();
+      }
+   
+      if (choice.choices == 'Add an Employee'){
+       addNewEmployee();
+      }
+ 
    
 
   });
