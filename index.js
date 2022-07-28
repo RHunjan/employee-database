@@ -36,7 +36,7 @@ const viewEmployees = function(){
       console.table(rows);
     });
 };
-// viewEmployees();
+ viewEmployees();
 
 //add a department
 const addDepartment = function(name){
@@ -102,8 +102,104 @@ const addNewRole = function(){
      });
 };
 
-addNewRole();
+//addNewRole();
 //------------------------------------------------------------------------------------------------------
 //add employee - first name, last name, role, manager
 
-const addNewEmployee = function(){};
+const addNewEmployee = function(){
+  const sql = `SELECT * FROM roles`;
+  db.query(sql, (err, res) => {
+    if (err) throw err;
+
+    let roleArray = [];
+    res.forEach((role) => {
+      roleArray.push(
+        {name: `${role.title}`,
+        id: role.id
+                });
+    });
+    //console.log(roleArray);
+    let questions = [
+      {type: 'input',
+       name: 'firstName',
+       message:'Please enter the first name of the employee',
+    },
+    {type: 'input',
+     name: 'lastName',
+     message:'Please enter the last name of the employee',
+    },
+    {type: 'list',
+     name: 'role',
+     message:'Pick the role',
+     choices: roleArray
+    }
+    ];
+
+    inquirer.prompt(questions)
+    .then((answers) => {
+      let roleID;
+      roleArray.forEach((role) => {
+          if (role.name === answers.role){
+              roleID = role.id;
+              console.log(roleID);
+      }
+      })
+      let empObj = {
+        firstName: answers.firstName,
+        lastName: answers.lastName,
+        role_id: roleID
+      }
+      return empObj;
+        
+    }).then((nextRes) => {
+      //console.log(nextRes);
+
+      let sql = `SELECT * FROM managers`;
+      db.query(sql, (err, res) =>{
+         let managerArray = [];
+          res.forEach((manager) => {
+        managerArray.push(
+        {
+        name: `${manager.manager_name}`,
+        id: manager.id
+        });
+    });
+    //console.log(managerArray);
+       // console.log(res);
+      inquirer.prompt([
+        {type: 'list',
+        name: 'manager',
+        message: 'Choose a manager',
+      choices: managerArray}
+      ]).then(answer => {
+        console.log(answer);
+        let managerID;
+        managerArray.forEach((manager)=>{
+           if (manager.name === answer.manager){
+           managerID = manager.id;
+         }
+
+         //console.log(nextRes);
+         console.log(managerID);
+         let sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
+                    VALUES (?,?,?,?)`;
+         let params = [nextRes.firstName, nextRes.lastName, nextRes.role_id, managerID];
+         db.query(sql, params, (err, result) => {
+          if (err) throw err;
+          //console.log(result);
+        });
+        
+        });
+        //console.log(managerID);
+      });
+
+
+
+
+      });
+    });
+
+     });
+};
+
+//addNewEmployee();
