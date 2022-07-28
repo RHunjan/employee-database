@@ -334,4 +334,4 @@ const initialPrompt = () => {
 
 };
 
- // initialPrompt();
+ initialPrompt();
