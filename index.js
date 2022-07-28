@@ -7,9 +7,12 @@ const { listenerCount } = require("./db/connection");
 
 //view all departments
   const allDepartments = function(){
-  db.query(`SELECT * FROM departments`, (err, rows) => {
+    db.query(`SELECT * FROM departments`, (err, rows) => {
     console.table(rows);
-  });
+    initialPrompt();
+  })
+
+  
 };
 //allDepartments();
 
@@ -17,6 +20,7 @@ const { listenerCount } = require("./db/connection");
 const allRoles = function(){
   db.query(`SELECT * FROM roles`, (err, rows) => {
     console.table(rows);
+    initialPrompt();
   });
 }
 //allRoles();
@@ -34,19 +38,21 @@ const viewEmployees = function(){
            JOIN departments 
            ON roles.department_id = departments.id`, (err, rows) =>{
       console.table(rows);
+      initialPrompt();
     });
 };
- viewEmployees();
+ //viewEmployees();
 
 //add a department
-const addDepartment = function(name){
+const addDepartment = function(department){
   const sql = `INSERT INTO departments (name)
   VALUES (?)`;
-  const params = name;
+  const params = department;
   db.query(sql, params, (err, result) => {
     if (err) {
     console.log(err);
   }
+  initialPrompt();
   });
  };
 //addDepartment('IT');
@@ -96,10 +102,13 @@ const addNewRole = function(){
       let params = [answers.role, department_id, answers.salary];
        db.query(sql,params, (err, res) =>{
         if (err) throw err;
-        console.log(res);
+       // console.log(res);
+       initialPrompt();
        });
        ;});
      });
+
+    
 };
 
 //addNewRole();
@@ -172,7 +181,7 @@ const addNewEmployee = function(){
         message: 'Choose a manager',
       choices: managerArray}
       ]).then(answer => {
-        console.log(answer);
+        //console.log(answer);
         let managerID;
         managerArray.forEach((manager)=>{
            if (manager.name === answer.manager){
@@ -180,7 +189,7 @@ const addNewEmployee = function(){
          }
 
          //console.log(nextRes);
-         console.log(managerID);
+        // console.log(managerID);
          let sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
                     VALUES (?,?,?,?)`;
          let params = [nextRes.firstName, nextRes.lastName, nextRes.role_id, managerID];
@@ -203,3 +212,125 @@ const addNewEmployee = function(){
 };
 
 //addNewEmployee();
+
+//--------------------------------------------------------------------------------------------------
+//Update employee role
+
+const updateEmp = function(){
+  //get list of employee names
+    const sql = `SELECT id, first_name, last_name FROM employees`;
+  db.query(sql, (err, res) => {
+    if (err) throw err;
+
+    let employeeArray = [];
+    res.forEach((employee) => {
+      employeeArray.push(
+        {name: `${employee.first_name} ${employee.last_name}`,
+        id: employee.id
+                })
+    });
+  
+     let questions = [
+      {type: 'list',
+     name: 'employee',
+     message:'Choose the employee to update',
+     choices: employeeArray
+    }
+    ];
+   inquirer.prompt(questions)
+    .then(answers =>{
+     console.log(answers);
+     
+     let empID;
+     employeeArray.forEach((employee) =>{
+      if (employee.name === answers.employee){
+        empID = employee.id;
+      }
+       } );
+
+       console.log(empID);
+    
+      let sql = `SELECT id, title, department_id FROM roles`;
+      db.query(sql, (err, result) =>{
+        if (err) throw err;
+
+        let roleArr = [];
+        result.forEach((role) => {
+          roleArr.push(
+            {name: `${role.title}`,
+            id: role.id
+          }
+            );
+        });
+
+        inquirer.prompt([
+          {type: 'list',
+           name: 'role',
+           message: 'c'
+        }
+        ]);
+
+       });
+
+    })//.then();
+
+     });
+};
+
+//updateEmp();
+
+//----------------------------------------------------------------------------------------------------
+
+const initialPrompt = () => {
+  inquirer.prompt([
+    {type: 'list',
+    name: 'choices',
+    message: 'What would you like to do?',
+    choices: [
+      'View all Departments',
+      'View all Roles',
+      'View all Employees' ,  
+      'Add a Department' , 
+      'Add a Role',
+
+      'Quit \n \n'
+    ]}
+  ])
+  .then((choice) =>{
+   
+    if (choice.choices === 'View all Departments'){
+      allDepartments();
+    }
+
+    if (choice.choices === 'View all Roles'){
+      allRoles();
+    }
+
+    if (choice.choices ==='View all Employees'){
+      viewEmployees();
+    }
+
+    if (choice.choices === 'Add a department'){
+      inquirer.prompt([
+        {type: 'input',
+        name: 'department',
+        message: 'Enter department name'
+      }
+      ]).then(answer =>{
+         addDepartment(answer.department);
+      });
+    }
+
+    if (choice.choices === 'Add a Role'){
+      addNewRole();
+    }
+    if (choice.choices === 'Quit'){
+      console.log('Bye');
+      return;
+    }
+
+  });
+
+};
+
+  initialPrompt();
