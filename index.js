@@ -20,7 +20,7 @@ const { listenerCount } = require("./db/connection");
 const allRoles = function(){
   db.query(`SELECT * FROM roles`, (err, rows) => {
     console.table(rows);
-    initialPrompt();
+ 
   });
 }
 //allRoles();
@@ -51,8 +51,9 @@ const addDepartment = function(department){
   db.query(sql, params, (err, result) => {
     if (err) {
     console.log(err);
-  }
-  initialPrompt();
+    }
+    console.log(result);
+
   });
  };
 //addDepartment('IT');
@@ -302,7 +303,7 @@ const initialPrompt = () => {
       allDepartments();
     }
 
-    if (choice.choices === 'View all Roles'){
+    if (choice.choices === 'View all Roles '){
       allRoles();
     }
 
@@ -311,23 +312,13 @@ const initialPrompt = () => {
     }
 
     if (choice.choices === 'Add a department'){
-      inquirer.prompt([
-        {type: 'input',
-        name: 'department',
-        message: 'Enter department name'
-      }
-      ]).then(answer =>{
-         addDepartment(answer.department);
-      });
+      console.log('choice.choices');
     }
 
     if (choice.choices === 'Add a Role'){
       addNewRole();
     }
-    if (choice.choices === 'Quit'){
-      console.log('Bye');
-      return;
-    }
+   
 
   });
 
